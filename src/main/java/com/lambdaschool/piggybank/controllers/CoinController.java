@@ -21,12 +21,24 @@ public class CoinController {
     // http://localhost:2019/total
     @GetMapping(value = "/total", produces = "application/json")
     public ResponseEntity<?> getTotal() {
-        //list to hold all coins
+        //create list and store all coins
         List<Coin> coinsList = new ArrayList<>();
         coinrepo.findAll().iterator().forEachRemaining(coinsList::add);
 
-        System.out.println();
+        //value to store total
+        double total = 0;
 
-        return new ResponseEntity<>(coinsList, HttpStatus.OK);
+        //iterate
+        for (Coin c: coinsList) {
+            if (c.getQuantity() > 1) {
+                System.out.println(c.getQuantity() + " " + c.getNameplural());
+            } else {
+                System.out.println(c.getQuantity() + " " + c.getName());
+            }
+            total += (c.getQuantity() * c.getValue());
+        }
+
+        System.out.println("The piggy bank holds " + total);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
