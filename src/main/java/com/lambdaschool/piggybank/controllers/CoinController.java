@@ -61,37 +61,53 @@ public class CoinController {
         double amountToRemove = amount;
         double total = 0.0;
 
-        //iterate
+        //get initial total balance
         for (Coin c: coinsList) {
-           while (c.getQuantity() > 0 && amountToRemove >= 0.0 ) {
-               //get value of a single coin
-               double value = 1 * c.getValue();
-               //System.out.println("value " + value);
-
-               //if less than amt to remove, decrement
-               if (value <= amountToRemove) {
-                   //System.out.println("amt to remove : " + amountToRemove);
-                   amountToRemove -= value;
-                   int currQuantity = c.getQuantity();
-                   c.setQuantity(currQuantity - 1);
-               } else {
-                   //If the value of a single coin is too much
-                   //skip to next currency value
-                   break;
-               }
-           }
-        }
-
-        for (Coin c: coinsList) {
-            if (c.getQuantity() > 1) {
-                System.out.println(df.format(c.getQuantity() * c.getValue()) + " " + c.getNameplural());
-            } else if (c.getQuantity() == 1){
-                System.out.println(df.format(c.getQuantity() * c.getValue())+ " " + c.getName());
-            }
             total += (c.getQuantity() * c.getValue());
         }
 
-        System.out.println("The piggy bank holds " + df.format(total));
+        //check if user entered amount is greater than bank balance
+        //if so, print Money not available
+        if (amountToRemove > total) {
+            System.out.println("Money not available");
+        } else {
+            //reset total counter
+            total = 0.0;
+            //iterate
+            for (Coin c : coinsList) {
+                while (c.getQuantity() > 0 && amountToRemove >= 0.0) {
+                    //get value of a single coin
+                    double value = 1 * c.getValue();
+                    //System.out.println("value " + value);
+
+                    //if less than amt to remove, decrement
+                    if (value <= amountToRemove) {
+                        //System.out.println("amt to remove : " + amountToRemove);
+                        amountToRemove -= value;
+                        int currQuantity = c.getQuantity();
+                        c.setQuantity(currQuantity - 1);
+                    } else {
+                        //If the value of a single coin is too much
+                        //skip to next currency value
+                        break;
+                    }
+                }
+            }
+
+            //final printout
+            for (Coin c: coinsList) {
+                if (c.getQuantity() > 1) {
+                    System.out.println(df.format(c.getQuantity() * c.getValue()) + " " + c.getNameplural());
+                } else if (c.getQuantity() == 1){
+                    System.out.println(df.format(c.getQuantity() * c.getValue())+ " " + c.getName());
+                }
+                total += (c.getQuantity() * c.getValue());
+            }
+            System.out.println("The piggy bank holds " + df.format(total));
+        }
+
+
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
